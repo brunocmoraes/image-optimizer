@@ -221,6 +221,16 @@ class BaseFileUpload extends Field
             ) {
                 $image = InterventionImage::make($file);
 
+                if($watermark) {
+                    $image->place(
+                        $watermark,
+                        'bottom-right',
+                        5,
+                        5,
+                        75
+                    );
+                }
+                
                 if ($optimize) {
                     $quality = $optimize === 'jpeg' ||
                         $optimize === 'jpg' ? 70 : null;
@@ -252,15 +262,6 @@ class BaseFileUpload extends Field
                     });
                 }
 
-                if($watermark) {
-                    $image->place(
-                        $watermark,
-                        'bottom-right',
-                        5,
-                        5,
-                        75
-                    );
-                }
 
                 if ($optimize) {
                     $compressedImage = $image->encode($optimize, $quality);
