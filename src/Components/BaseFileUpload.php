@@ -219,7 +219,7 @@ class BaseFileUpload extends Field
                 str_contains($file->getMimeType(), 'image') &&
                 ($optimize || $resize || $maxImageWidth || $maxImageHeight)
             ) {
-                $image = InterventionImage::make($file);
+                $image = InterventionImage::read($file);
 
                 if($watermark) {
                     $image->place(
