@@ -14,7 +14,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Intervention\Image\ImageManager as InterventionImage;
+use Intervention\Image\ImageManagerStatic as InterventionImage;
 use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Throwable;
@@ -219,10 +219,10 @@ class BaseFileUpload extends Field
                 str_contains($file->getMimeType(), 'image') &&
                 ($optimize || $resize || $maxImageWidth || $maxImageHeight)
             ) {
-                $image = InterventionImage::read($file);
+                $image = InterventionImage::make($file);
 
                 if($watermark) {
-                    $image->place(
+                    $image->insert(
                         $watermark,
                         'bottom-right',
                         5,
