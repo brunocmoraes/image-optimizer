@@ -56,6 +56,8 @@ class BaseFileUpload extends Field
 
     protected string | Closure | null $optimize = null;
 
+    protected string | Closure | null $watermark = null;
+
     protected int | Closure | null $resize = null;
 
     protected int | Closure | null $maxImageWidth = null;
@@ -204,6 +206,7 @@ class BaseFileUpload extends Field
             $compressedImage = null;
             $filename = $component->getUploadedFileNameForStorage($file);
             $optimize = $component->getOptimization();
+            $watermark = $component->getWatermark();
             $resize = $component->getResize();
             $maxImageWidth = $component->getMaxImageWidth();
             $maxImageHeight = $component->getMaxImageHeight();
@@ -247,6 +250,16 @@ class BaseFileUpload extends Field
                     $image->resize($imageWidth, $imageHeight, function ($constraint) {
                         $constraint->aspectRatio();
                     });
+                }
+
+                if($watermark) {
+                    $image->place(
+                        $watermark,
+                        'bottom-right',
+                        5,
+                        5,
+                        75
+                    );
                 }
 
                 if ($optimize) {
@@ -508,6 +521,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function watermark(string | Closure | null $watermark): static
+    {
+        $this->watermark = $watermark;
+
+        return $this;
+    }
+    
     public function resize(int | Closure | null $reductionPercentage): static
     {
         $this->resize = $reductionPercentage;
@@ -658,6 +678,11 @@ class BaseFileUpload extends Field
     public function getOptimization(): ?string
     {
         return $this->evaluate($this->optimize);
+    }
+
+    public function getWatermark(): ?string
+    {
+        return $this->evaluate($this->watermark);
     }
 
     public function getResize(): ?int
