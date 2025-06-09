@@ -264,7 +264,7 @@ class BaseFileUpload extends Field
 
 
                 if ($optimize) {
-                    $compressedImage = $image->encode($optimize, $quality);
+                    $compressedImage = $image->encode($optimize, 80);
                 } else {
                     $compressedImage = $image->encode();
                 }
