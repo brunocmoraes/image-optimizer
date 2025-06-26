@@ -58,6 +58,9 @@ class BaseFileUpload extends Field
 
     protected string | Closure | null $watermark = null;
 
+    protected string | null $watermarkPosition = null;
+
+
     protected int | Closure | null $resize = null;
 
     protected int | Closure | null $maxImageWidth = null;
@@ -207,6 +210,7 @@ class BaseFileUpload extends Field
             $filename = $component->getUploadedFileNameForStorage($file);
             $optimize = $component->getOptimization();
             $watermark = $component->getWatermark();
+            $watermarkPosition = $component->getWatermarkposition();
             $resize = $component->getResize();
             $maxImageWidth = $component->getMaxImageWidth();
             $maxImageHeight = $component->getMaxImageHeight();
@@ -221,15 +225,7 @@ class BaseFileUpload extends Field
             ) {
                 $image = InterventionImage::make($file);
 
-                if($watermark) {
-                    $image->insert(
-                        $watermark,
-                        'bottom-right',
-                        5,
-                        5,
-                        75
-                    );
-                }
+               
                 
                 if ($optimize) {
                     $quality = $optimize === 'jpeg' ||
@@ -262,6 +258,15 @@ class BaseFileUpload extends Field
                     });
                 }
 
+                 if($watermark) {
+                    $image->insert(
+                        $watermark,
+                        $watermarkPosition,
+                        5,
+                        5,
+                        75
+                    );
+                }
 
                 if ($optimize) {
                     $compressedImage = $image->encode($optimize, 80);
@@ -522,9 +527,10 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function watermark(string | Closure | null $watermark): static
+    public function watermark(string | Closure | null $watermark, string | null $watermarkPosition): static
     {
         $this->watermark = $watermark;
+        $this->watermarkPosition = $this->watermarkPosition == null ? 'bottom-right' : $watermarkPosition;
 
         return $this;
     }
@@ -684,6 +690,10 @@ class BaseFileUpload extends Field
     public function getWatermark(): ?string
     {
         return $this->evaluate($this->watermark);
+    }
+    public function getWatermarkPosition(): ?string
+    {
+        return $this->evaluate($this->watermarkPosition);
     }
 
     public function getResize(): ?int
